@@ -45,7 +45,9 @@ namespace SteamBot
 
         public override void OnFriendRemove() { }
 
-        public override void OnLoginCompleted() { }
+        public override void OnLoginCompleted() {
+            Bot.SteamFriends.SetPersonaState(SteamKit2.EPersonaState.LookingToTrade);
+        }
 
         public override bool OnTradeRequest() { return true; }
 
