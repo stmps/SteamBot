@@ -19,21 +19,23 @@ namespace SteamBot
         // trashbot accepts *all* trade offers
         // set your inventory privacy appropriately if you don't want the public taking all your items
         public override void OnNewTradeOffer(TradeOffer offer)
-        {
-            Log.Debug("[Trade ID " + offer.TradeOfferId + "] Inbound trade offer" );
-            
+        {          
             var theirItemCount = offer.Items.GetTheirItems().Count;
             var myItemCount = offer.Items.GetMyItems().Count;
 
-            Log.Info("[Trade ID " + offer.TradeOfferId + "] Gaining " + theirItemCount + " item(s), losing " + myItemCount + " item(s)");
-
             if (offer.Accept())
             {
-                Bot.SteamFriends.SendChatMessage(OtherSID, EChatEntryType.ChatMsg, "Trade Complete. [+" + theirItemCount + " -" + myItemCount + "]");
-                Log.Success("[Trade ID " + offer.TradeOfferId + "] Accepted trade offer successfully");
+                String offerAcceptMessage = "Offer Accepted. (+" + theirItemCount + ", -" + myItemCount + " item(s))";
+                Bot.SteamFriends.SendChatMessage(OtherSID, EChatEntryType.ChatMsg, offerAcceptMessage);
+                Log.Success(offerAcceptMessage + " from " + Bot.SteamFriends.GetFriendPersonaName(OtherSID));
+
+                if (myItemCount > 0)
+                {
+                    // todo: post a group/clan comment about new items
+                }
             }
             else
-                Log.Warn("[Trade ID " + offer.TradeOfferId + "] Trade offer failed");
+                Log.Warn("Trade offer failed");
         }
 
         public override void OnMessage(string message, EChatEntryType type) { }
@@ -49,7 +51,9 @@ namespace SteamBot
             Bot.SteamFriends.SetPersonaState(SteamKit2.EPersonaState.LookingToTrade);
         }
 
-        public override bool OnTradeRequest() { return true; }
+        public override bool OnTradeRequest() {
+            Bot.log.Success(Bot.SteamFriends.GetFriendPersonaName(OtherSID) + " (" + OtherSID.ToString() + ") has requested to trade with me!");
+            return true; }
 
         public override void OnTradeError(string error) {
             Bot.SteamFriends.SendChatMessage(OtherSID,
@@ -90,10 +94,7 @@ namespace SteamBot
             }
             else
             {
-                if (IsAdmin)
-                {
-                    Trade.SetReady(true);
-                }
+                Trade.SetReady(true);
             }
         }
 
