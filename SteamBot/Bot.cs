@@ -87,8 +87,8 @@ namespace SteamBot
         public string MyUserNonce;
         public string MyUniqueId;
 
-        string sessionId;
-        string token;
+        public string sessionId;
+        public string token;
         string tokensecure;
         bool CookiesAreInvalid = true;
 
